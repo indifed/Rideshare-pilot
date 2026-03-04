@@ -1,0 +1,38 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id          String   @id
+  riderId     String
+  status      String
+  createdAt   DateTime @default(now())
+  engagement  Engagement?
+  reward      Reward?
+}
+
+model Engagement {
+  id        String   @id
+  score     Int
+  sessionId String   @unique
+  session   Session  @relation(fields: [sessionId], references: [id])
+}
+
+model Reward {
+  id        String   @id
+  token     String   @unique
+  sessionId String   @unique
+  session   Session  @relation(fields: [sessionId], references: [id])
+  redeemed  Boolean  @default(false)
+}
+
+model Offer {
+  id    String @id
+  name  String
+}
